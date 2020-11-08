@@ -1,57 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, {useState} from "react";
 import Axios from "axios";
+import sha1 from "sha1";
 import "../App.css";
 
 export default function Registration() {
-  const [usernameReg, setUsernameReg] = useState("");
+  const [userEmailReg, setUserEmailReg] = useState("");
   const [passwordReg, setPasswordReg] = useState("");
 
-  const [username, setUsername] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [loginStatus, setLoginStatus] = useState("");
 
-  Axios.defaults.withCredentials = true;
+  // Axios.defaults.withCredentials = true;
 
   const register = () => {
-    Axios.post("http://localhost:3001/register", {
-      username: usernameReg,
-      password: passwordReg,
+    Axios.post("http://localhost:3001/api/register", {
+      userEmail: userEmailReg,
+      password: sha1(passwordReg),
     }).then((response) => {
-      console.log(response);
+      console.log(response.data);
     });
-  };
+  }
 
   const login = () => {
-    Axios.post("http://localhost:3001/login", {
-      username: username,
-      password: password,
+    Axios.post("http://localhost:3001/api/login", {
+      userEmail: userEmail,
+      password: sha1(password),
     }).then((response) => {
-      if (response.data.message) {
-        setLoginStatus(response.data.message);
-      } else {
-        setLoginStatus(response.data[0].username);
-      }
+      console.log(response.data);
     });
-  };
-
-  useEffect(() => {
-    Axios.get("http://localhost:3001/login").then((response) => {
-      if (response.data.loggedIn == true) {
-        setLoginStatus(response.data.user[0].username);
-      }
-    });
-  }, []);
+  }
 
   return (
     <div className="App">
       <div className="registration">
         <h1>Registration</h1>
-        <label>Username</label>
+        <label>UserEmail</label>
         <input
-          type="text"
+          type="email"
           onChange={(e) => {
-            setUsernameReg(e.target.value);
+            setUserEmailReg(e.target.value);
           }}
         />
         <label>Password</label>
@@ -68,9 +56,9 @@ export default function Registration() {
         <h1>Login</h1>
         <input
           type="text"
-          placeholder="Username..."
+          placeholder="UserEmail..."
           onChange={(e) => {
-            setUsername(e.target.value);
+            setUserEmail(e.target.value);
           }}
         />
         <input
@@ -82,8 +70,6 @@ export default function Registration() {
         />
         <button onClick={login}> Login </button>
       </div>
-
-      <h1>{loginStatus}</h1>
     </div>
   );
 }
